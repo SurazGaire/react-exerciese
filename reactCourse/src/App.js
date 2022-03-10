@@ -44,7 +44,18 @@ const App = () =>{
     return (countClick.good + countClick.neutral + countClick.bad)/3;
   }
 
-  
+  if(totalFeedbacks()=== 0){
+    return (
+      <div>
+      <h1>give feedback</h1>
+      <Button onClick={goodFeedback} text='Good'/>
+      <Button onClick={neutralFeedback} text='Neutral'/>
+      <Button onClick={badFeedback} text='Bad'/>
+      <h1>statistics</h1>
+      <p>No feedback given</p>
+      </div>
+    )
+  }
   return(
     <div>
       <h1>give feedback</h1>
