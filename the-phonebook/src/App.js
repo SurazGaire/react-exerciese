@@ -1,18 +1,38 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import axios from "axios";
 const App = () => {
-	const [persons, setPersons] = useState([
-		{
-			name: "Peter Parker",
-			id: 1,
-		},
-	]);
+	const [persons, setPersons] = useState();
 	const [newName, setNewName] = useState([""]);
+	const [newNumber, setNewNumber] = useState([]);
+
+	// let searchKey = "";
+
+	// let newNumber = 0;
+
+	useEffect(() => {
+		axios.get("http://localhost:3001/persons").then((response) => {
+			console.log(response);
+			setPersons(response.data);
+		});
+	}, []);
+
+	const displayNumber = (e) => {
+		e.preventDefault();
+		// newNumber = e.target.value;
+		setNewNumber(e.target.value);
+	};
 
 	const displayText = (e) => {
 		e.preventDefault();
 		setNewName(e.target.value);
 	};
+
+	// const filterText = (e) => {
+	// 	e.preventDefault();
+	// 	searchKey = e.target.value;
+	// 	searchResult = persons.filter((person) => person.name.includes(searchKey));
+	// 	// console.log(searchResult);
+	// };
 
 	const addPerson = () => {
 		// // console.log(newName);
@@ -43,12 +63,13 @@ const App = () => {
 		if (!nameMatch) {
 			const myObject = {
 				name: newName,
+				number: newNumber,
 				id: persons.length + 1,
 			};
 			setPersons(persons.concat(myObject));
 			setNewName("");
 		} else {
-			alert(newName + "is already added to the Phonebook.");
+			alert(`${newName} is already added to the Phonebook.`);
 		}
 	};
 
@@ -56,15 +77,20 @@ const App = () => {
 		<div>
 			<h2>Phonebook</h2>
 			<div>
-				name : <input onChange={displayText} value={newName} />
+				Filter shown with :<input></input>
+			</div>
+			<h1>Add a New</h1>
+			<div>
+				Name : <input onChange={displayText} value={newName} />
+			</div>
+			<div>
+				Number : <input onChange={displayNumber} value={newNumber} />
 			</div>
 			<div>
 				<button onClick={addPerson}>Add</button>
 			</div>
 			<h2>Numbers</h2>
-			{persons.map((person) => (
-				<h4 key={person.id}>{person.name}</h4>
-			))}
+			<div></div>
 		</div>
 	);
 };
