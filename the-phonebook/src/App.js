@@ -52,13 +52,31 @@ const App = () => {
 			});
 			setNewName("");
 		} else {
-			alert(`${newName} is already added to the Phonebook.`);
+			if (
+				window.confirm(
+					`Do you want to replace ${newName} old number with the new one?`
+				)
+			) {
+				const findId = persons.filter((p) => p.name === newName);
+				findId.map((person) => updateNumber(person.id));
+			}
 		}
+	};
+
+	const updateNumber = (id) => {
+		console.log(id);
+		const personToEdit = persons.find((p) => p.id === id);
+		const editedObject = { ...personToEdit, name: newName, number: newNumber };
+
+		personService.update(id, editedObject).then((returnedPerson) => {
+			return setPersons(
+				persons.map((person) => (person.id !== id ? person : returnedPerson))
+			);
+		});
 	};
 
 	const confirmDelete = (id) => {
 		if (window.confirm("Do you really want to delete this data?")) {
-			console.log(`The content of this ${id} needs to be deleted`);
 			personService.remove(id).then((response) => {
 				const afterDelete = persons.filter((person) => person.id !== id);
 				setPersons(afterDelete);
