@@ -47,7 +47,8 @@ const App = () => {
 				number: newNumber,
 			};
 			personService.create(myObject).then((response) => {
-				persons(response.data);
+				const allData = persons.concat(response);
+				setPersons(allData);
 			});
 			setNewName("");
 		} else {
@@ -55,8 +56,14 @@ const App = () => {
 		}
 	};
 
-	const confirmDelete = () => {
-		window.confirm("Do you really want to delete this data?");
+	const confirmDelete = (id) => {
+		if (window.confirm("Do you really want to delete this data?")) {
+			console.log(`The content of this ${id} needs to be deleted`);
+			personService.remove(id).then((response) => {
+				const afterDelete = persons.filter((person) => person.id !== id);
+				setPersons(afterDelete);
+			});
+		}
 	};
 
 	return (
@@ -94,7 +101,14 @@ const App = () => {
 						{persons.map((p, index) => (
 							<li key={index}>
 								{p.name} : {p.number}
-								<button onClick={confirmDelete}> Delete </button>
+								<button
+									onClick={() => {
+										confirmDelete(p.id);
+									}}
+								>
+									{" "}
+									Delete{" "}
+								</button>
 							</li>
 						))}
 					</ul>
