@@ -32,10 +32,10 @@ const App = () => {
 		event.preventDefault();
 		setSearchKey(event.target.value);
 
-		let resultsSearch = persons.filter((p) =>
+		const resultsSearch = persons.filter((p) =>
 			p.name.includes(event.target.value)
 		);
-		console.log(resultsSearch);
+		setSearchResult(resultsSearch);
 	};
 
 	const addPerson = () => {
@@ -45,8 +45,11 @@ const App = () => {
 			const myObject = {
 				name: newName,
 				number: newNumber,
-				id: persons.length + 1,
 			};
+			axios.post("http://localhost:3001/persons", myObject).then((response) => {
+				console.log(response.data);
+				persons(response.data);
+			});
 			setPersons(persons.concat(myObject));
 			console.log(persons);
 			setNewName("");
@@ -62,7 +65,7 @@ const App = () => {
 				Filter shown with :
 				<input onChange={getSearchKey} value={searchKey}></input>
 			</div>
-			<h1>Add a New</h1>
+			<h1>Add New Person</h1>
 			<p>
 				Name : <input onChange={displayText} value={newName} />
 			</p>
@@ -73,15 +76,28 @@ const App = () => {
 				<button onClick={addPerson}>Add</button>
 			</div>
 			<h2>Numbers</h2>
-			<div>
-				<ul>
-					{persons.map((p, index) => (
-						<li key={index}>
-							{p.name} : {p.number}
-						</li>
-					))}
-				</ul>
-			</div>
+			{searchResult.length === 1 ? (
+				<div>
+					<h3>Your search results: </h3>
+					<h4>
+						{searchResult.map((rs, index) => (
+							<span key={index}>
+								{rs.name} : {rs.number}
+							</span>
+						))}
+					</h4>
+				</div>
+			) : (
+				<div>
+					<ul>
+						{persons.map((p, index) => (
+							<li key={index}>
+								{p.name} : {p.number}
+							</li>
+						))}
+					</ul>
+				</div>
+			)}
 		</div>
 	);
 };
