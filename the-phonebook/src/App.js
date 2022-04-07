@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import personService from "./services/persons";
 const App = () => {
 	const [persons, setPersons] = useState([]);
 	const [newName, setNewName] = useState([""]);
@@ -12,8 +12,8 @@ const App = () => {
 	// let newNumber = 0;
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/persons").then((response) => {
-			setPersons(response.data);
+		personService.getAll().then((initialData) => {
+			setPersons(initialData);
 		});
 	}, []);
 
@@ -46,16 +46,17 @@ const App = () => {
 				name: newName,
 				number: newNumber,
 			};
-			axios.post("http://localhost:3001/persons", myObject).then((response) => {
-				console.log(response.data);
+			personService.create(myObject).then((response) => {
 				persons(response.data);
 			});
-			setPersons(persons.concat(myObject));
-			console.log(persons);
 			setNewName("");
 		} else {
 			alert(`${newName} is already added to the Phonebook.`);
 		}
+	};
+
+	const confirmDelete = () => {
+		window.confirm("Do you really want to delete this data?");
 	};
 
 	return (
@@ -93,6 +94,7 @@ const App = () => {
 						{persons.map((p, index) => (
 							<li key={index}>
 								{p.name} : {p.number}
+								<button onClick={confirmDelete}> Delete </button>
 							</li>
 						))}
 					</ul>
