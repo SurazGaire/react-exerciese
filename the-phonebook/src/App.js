@@ -9,6 +9,8 @@ const App = () => {
 
 	const [searchResult, setSearchResult] = useState([]);
 
+	const [errorMessage, setErrorMessage] = useState(null);
+
 	// let newNumber = 0;
 
 	useEffect(() => {
@@ -16,6 +18,23 @@ const App = () => {
 			setPersons(initialData);
 		});
 	}, []);
+
+	const Notification = ({ message }) => {
+		const errorStyle = {
+			color: "red",
+			background: "lightgrey",
+			fontSize: 20,
+			borderStyle: "solid",
+			borderRadius: 5,
+			padding: 10,
+			marginBottom: 10,
+		};
+		if (message === null) {
+			return null;
+		} else {
+			return <div style={errorStyle}>{message}</div>;
+		}
+	};
 
 	const displayNumber = (e) => {
 		e.preventDefault();
@@ -49,6 +68,10 @@ const App = () => {
 			personService.create(myObject).then((response) => {
 				const allData = persons.concat(response);
 				setPersons(allData);
+				setErrorMessage(`${newName} added Sucessful`);
+				setTimeout(() => {
+					setErrorMessage(null);
+				}, 5000);
 			});
 			setNewName("");
 		} else {
@@ -87,6 +110,7 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
+			<Notification message={errorMessage} />
 			<div>
 				Filter shown with :
 				<input onChange={getSearchKey} value={searchKey}></input>
