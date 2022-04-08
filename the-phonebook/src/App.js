@@ -100,10 +100,17 @@ const App = () => {
 
 	const confirmDelete = (id) => {
 		if (window.confirm("Do you really want to delete this data?")) {
-			personService.remove(id).then((response) => {
-				const afterDelete = persons.filter((person) => person.id !== id);
-				setPersons(afterDelete);
-			});
+			personService
+				.remove(id)
+				.then((response) => {
+					const afterDelete = persons.filter((person) => person.id !== id);
+					setPersons(afterDelete);
+				})
+				.catch((error) => {
+					setErrorMessage(
+						`Information of this person has already been deleted from server`
+					);
+				});
 		}
 	};
 
